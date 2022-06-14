@@ -26,6 +26,10 @@ const config: HardhatUserConfig = {
   solidity: "0.8.4",
   networks: {
     localhost: {},
+    rinkeby: {
+      url: "https://rinkeby.infura.io/v3/7006947de24b4ac9b33269017c996559",
+      accounts: ["320ab691eb1cd32e832d1d56702e7ed69bf6f8ffc398bcf71daebad39c9280a9"]
+    },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
       accounts:

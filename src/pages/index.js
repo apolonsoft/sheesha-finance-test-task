@@ -3,8 +3,8 @@ import Pool from "../../artifacts/contracts/SheeshaPool.sol/SheeshaPool.json";
 import Erc20Token from "../abi/Erc20Token.json";
 import {useState} from "react";
 
-const contractAddress = "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82";
-const tokenAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
+const contractAddress = "0x0Ac583087f1160f21a110e71aC0834726f7812Da"; // Sheeesha Pool Contract Address
+const tokenAddress = "0xFab46E002BbF0b4509813474841E0716E6730136"; // Sheeesha Token Contract Address
 
 
 function HomePage() {
