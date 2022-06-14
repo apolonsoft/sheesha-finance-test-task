@@ -1,8 +1,6 @@
-import Web3Modal from "web3modal";
-import {  ethers } from "ethers";
+import {ethers} from "ethers";
 import Pool from "../../artifacts/contracts/SheeshaPool.sol/SheeshaPool.json";
 import Erc20Token from "../abi/Erc20Token.json";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import {useState} from "react";
 
 const contractAddress = "0xA4899D35897033b927acFCf422bc745916139776";
@@ -10,124 +8,120 @@ const tokenAddress = "0x367761085BF3C12e5DA2Df99AC6E1a824612b8fb";
 
 
 function HomePage() {
+    const [account, setAccount] = useState(null);
+    const [contract, setContract] = useState();
+    const [tokenContract, setTokenContract] = useState();
+    const [tokenBalanceInPool,setTokenBalanceInPool] = useState('0');
+    const [tokenBalanceInWallet,setTokenBalanceInWallet] = useState('0');
+    const [investAmount,setInvestAmount] = useState('0');
+    const [claimAmount,setClaimAmount] = useState('0');
 
-  const [provider,setProvider] = useState();
+    const connect = async (e) => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const poolContract = new ethers.Contract(contractAddress, Pool.abi, signer);
+        setContract(poolContract);
+        const myTokenContract = new ethers.Contract(
+            tokenAddress,
+            Erc20Token.abi,
+            signer
+        );
+        setTokenContract(myTokenContract);
+        const accounts = await provider.listAccounts();
+        setAccount(accounts && accounts.length > 0 ? accounts[0] : null);
+    }
 
-  const connect = async (e) => {
-    const web3Modal = new Web3Modal({
-      cacheProvider: true,
-      providerOptions:{
-        walletconnect: {
-          package: WalletConnectProvider, // required
-          options: {
-            infuraId: "INFURA_ID" // required
-          }
+    const fetchBalances = async () => {
+        try {
+            const balance = await contract.balance();
+            setTokenBalanceInPool(ethers.utils.formatUnits(balance, 18));
+            const mBalance = await tokenContract.balanceOf(account);
+            setTokenBalanceInWallet(ethers.utils.formatUnits(mBalance, 18));
+        } catch (error) {
+            console.log(error)
         }
-      }
-    });
-    const connection = await web3Modal.connect();
-    const myProvider = new ethers.providers.Web3Provider(connection);
-    setProvider(myProvider)
-  }
-
-  const getBalance = async (e) => {
-    try {
-
-      console.log(provider);
-      const accounts = await provider.listAccounts();
-      const signer =  provider.getSigner();
-
-      const contract = new ethers.Contract(contractAddress, Pool.abi, signer);
-      const balance = await contract.balance();
-      console.log(ethers.utils.formatUnits(balance.toString(), 18));
-
-      const tokenContract = new ethers.Contract(
-          tokenAddress,
-          Erc20Token.abi,
-          signer
-      );
-      const mBalance = await tokenContract.balanceOf(accounts[0]);
-      console.log(mBalance.toString());
-    }catch(error){
-      console.log(error)
     }
-  }
 
-  const invest = async (e) => {
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const accounts = await provider.listAccounts();
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, Pool.abi, signer);
 
-      const value = ethers.utils.parseUnits("5", 18);
-      console.log(value.toString());
-
-      const tokenContract = new ethers.Contract(
-        tokenAddress,
-        Erc20Token.abi,
-        signer
-      );
-
-      const approval = await tokenContract.approve(contractAddress, value, {
-        from: accounts[0],
-        gasLimit: 3500000,
-      });
-      await approval.wait();
-
-      const tx = await contract.invest(value, {
-        from: accounts[0],
-        gasLimit: 3500000,
-      });
-      console.log(tx);
-    } catch (error) {
-      console.log(error);
+    const getBalance = async (e) => {
+       await fetchBalances();
     }
-  };
 
-  const claim = async (e) => {
-    try {
-      const web3Modal = new Web3Modal();
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const accounts = await provider.listAccounts();
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, Pool.abi, signer);
-      const value = ethers.utils.parseUnits("2", 18);
+    const invest = async (e) => {
+        try {
+            console.log(investAmount);
+            const value = ethers.utils.parseUnits(investAmount, 18);
+            const approval = await tokenContract.approve(contractAddress, value, {
+                from: account,
+                gasLimit: 3500000,
+            });
+            await approval.wait();
 
-      const tx = await contract.claim(value, {
-        from: accounts[0],
-        gasLimit: 3500000,
-      });
-      console.log(tx);
-      await tx.wait();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+            const tx = await contract.invest(value, {
+                from: account,
+                gasLimit: 3500000,
+            });
+            await tx.wait();
+            setInvestAmount('0');
+            await fetchBalances();
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const claim = async (e) => {
+        try {
+            const value = ethers.utils.parseUnits(claimAmount, 18);
+
+            const tx = await contract.claim(value, {
+                from: account,
+                gasLimit: 3500000,
+            });
+            await tx.wait();
+            await fetchBalances();
+            setClaimAmount('0');
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
 
+    return (
+        <div>
+            <p>
+                <button onClick={connect}>Connect</button>
+            </p>
 
-  return (
-    <div>
-      <p>
-        <button onClick={connect}>Connect</button>
-      </p>
-      <p>
-        <button onClick={getBalance}>Get Balance</button>
-      </p>
-      <p>
-        <button onClick={invest}>Invest</button>
-      </p>
+            <div>
 
-      <p>
-        <button onClick={claim}>Claim</button>
-      </p>
+                <p>
+                    Token Balance in Pool Contract : {tokenBalanceInPool}
+                </p>
+                <p>
+                    Token Balance in Wallet : {tokenBalanceInWallet}
+                </p>
 
-    </div>
-  );
+                <p>
+                    <button onClick={getBalance}>Get Balance</button>
+                </p>
+                <p>
+                    <input type="text" value={investAmount} onChange={(e) => {
+                        setInvestAmount(e.target.value);
+                    }} />
+                    <button onClick={invest}>Invest</button>
+                </p>
+
+                <p>
+                    <input type="text" value={claimAmount} onChange={(e) => {
+                        setClaimAmount(e.target.value);
+                    }} />
+                    <button onClick={claim}>Claim</button>
+                </p>
+            </div>
+        </div>
+    );
 }
 
 export default HomePage;
