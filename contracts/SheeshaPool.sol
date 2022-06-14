@@ -1,3 +1,6 @@
+//SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
+
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -57,6 +60,11 @@ contract SheeshaPool is ReentrancyGuard, Ownable {
             finaAmount = userInvestingData.amountInvested;
             userInvestingData.amountInvested = 0;
         }
+
+        require(
+            investingToken.transferFrom(address(this),msg.sender, finaAmount),
+            "Cannot transfer balance"
+        );
 
         emit Claimed(msg.sender, finaAmount);
     }
