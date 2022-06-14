@@ -91,7 +91,7 @@ function HomePage() {
             <p>
                 <button onClick={connect} style={{ padding: "8px 12px", background: "transparent", border: "1px solid red", borderRadius: 8}}>Connect</button>
             </p>
-
+            {account &&
             <div>
 
                 <p>
@@ -117,7 +117,7 @@ function HomePage() {
                     }} />
                     <button onClick={claim} style={{ background: "#f70000", border: "none", borderRadius: 8, padding: "8px 10px", boxShadow: "0px 0px 10px 0px #f700007a", color: "white"}}>Claim</button>
                 </p>
-            </div>
+            </div>}
         </div>
     );
 }
