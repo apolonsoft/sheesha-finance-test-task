@@ -29,7 +29,7 @@ Step 4
 
 Step 5
 
-`Replace Sheesha Token Contract Address and Sheesha Pool Contract Address with new addresses that you are getting from running deploy.ts outout`
+`Replace Sheesha Token Contract Address and Sheesha Pool Contract Address with new addresses that you are getting from running deploy.ts output`
 
 Step 6
 ```shell
