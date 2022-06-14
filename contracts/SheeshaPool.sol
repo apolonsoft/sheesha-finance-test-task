@@ -60,13 +60,17 @@ contract SheeshaPool is ReentrancyGuard, Ownable {
             finaAmount = userInvestingData.amountInvested;
             userInvestingData.amountInvested = 0;
         }
-
+        require(
+            finaAmount > 0,
+            "claim error"
+        );
         require(
             investingToken.transfer(msg.sender, finaAmount),
             "Cannot transfer balance"
         );
 
         emit Claimed(msg.sender, finaAmount);
+
     }
 
     function balance() external view returns (uint256 amount) {

@@ -3,8 +3,8 @@ import Pool from "../../artifacts/contracts/SheeshaPool.sol/SheeshaPool.json";
 import Erc20Token from "../abi/Erc20Token.json";
 import {useState} from "react";
 
-const contractAddress = "0xA4899D35897033b927acFCf422bc745916139776";
-const tokenAddress = "0x367761085BF3C12e5DA2Df99AC6E1a824612b8fb";
+const contractAddress = "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82";
+const tokenAddress = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
 
 
 function HomePage() {
@@ -50,7 +50,6 @@ function HomePage() {
 
     const invest = async (e) => {
         try {
-            console.log(investAmount);
             const value = ethers.utils.parseUnits(investAmount, 18);
             const approval = await tokenContract.approve(contractAddress, value, {
                 from: account,
@@ -74,7 +73,6 @@ function HomePage() {
     const claim = async (e) => {
         try {
             const value = ethers.utils.parseUnits(claimAmount, 18);
-
             const tx = await contract.claim(value, {
                 from: account,
                 gasLimit: 3500000,
@@ -91,7 +89,7 @@ function HomePage() {
     return (
         <div>
             <p>
-                <button onClick={connect}>Connect</button>
+                <button onClick={connect} style={{ padding: "8px 12px", background: "transparent", border: "1px solid red", borderRadius: 8}}>Connect</button>
             </p>
 
             <div>
@@ -104,20 +102,20 @@ function HomePage() {
                 </p>
 
                 <p>
-                    <button onClick={getBalance}>Get Balance</button>
+                    <button onClick={getBalance} style={{ background: "#f70000", border: "none", borderRadius: 8, padding: "8px 10px", boxShadow: "0px 0px 10px 0px #f700007a", color: "white"}}>Get Balance</button>
                 </p>
                 <p>
-                    <input type="text" value={investAmount} onChange={(e) => {
+                    <input type="text" value={investAmount} style={{border: "none", borderRadius: 8, boxShadow: "0 0 10px 0 #cccccc8f", padding: "8px 12px"}} onChange={(e) => {
                         setInvestAmount(e.target.value);
                     }} />
-                    <button onClick={invest}>Invest</button>
+                    <button onClick={invest} style={{ background: "#f70000", border: "none", borderRadius: 8, padding: "8px 12px", boxShadow: "0px 0px 10px 0px #f700007a", color: "white"}}>Invest</button>
                 </p>
 
                 <p>
-                    <input type="text" value={claimAmount} onChange={(e) => {
+                    <input type="text" value={claimAmount} style={{border: "none", borderRadius: 8, boxShadow: "0 0 10px 0 #cccccc8f", padding: "8px 12px"}} onChange={(e) => {
                         setClaimAmount(e.target.value);
                     }} />
-                    <button onClick={claim}>Claim</button>
+                    <button onClick={claim} style={{ background: "#f70000", border: "none", borderRadius: 8, padding: "8px 10px", boxShadow: "0px 0px 10px 0px #f700007a", color: "white"}}>Claim</button>
                 </p>
             </div>
         </div>
