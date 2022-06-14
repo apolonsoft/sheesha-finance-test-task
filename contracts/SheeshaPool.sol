@@ -62,7 +62,7 @@ contract SheeshaPool is ReentrancyGuard, Ownable {
         }
 
         require(
-            investingToken.transferFrom(address(this),msg.sender, finaAmount),
+            investingToken.transfer(msg.sender, finaAmount),
             "Cannot transfer balance"
         );
 

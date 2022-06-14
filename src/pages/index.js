@@ -5,8 +5,8 @@ import Erc20Token from "../abi/Erc20Token.json";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import {useState} from "react";
 
-const contractAddress = "0x1c85638e118b37167e9298c2268758e058DdfDA0";
-const tokenAddress = "0xBEc49fA140aCaA83533fB00A2BB19bDdd0290f25";
+const contractAddress = "0xA4899D35897033b927acFCf422bc745916139776";
+const tokenAddress = "0x367761085BF3C12e5DA2Df99AC6E1a824612b8fb";
 
 
 function HomePage() {
@@ -99,7 +99,7 @@ function HomePage() {
 
       const tx = await contract.claim(value, {
         from: accounts[0],
-        gasLimit: 6500000,
+        gasLimit: 3500000,
       });
       console.log(tx);
       await tx.wait();
